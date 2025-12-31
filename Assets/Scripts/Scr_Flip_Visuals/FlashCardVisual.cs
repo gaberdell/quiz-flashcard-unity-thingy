@@ -25,7 +25,7 @@ public class FlashCardVisual : MonoBehaviour
 
     Func<float, float> zeroToOneSwitch;
 
-    /*Privaet variables*/
+    /*Private variables*/
     private float currentFlip = 0; /* Flip rotation is represented by a range from -1,1 */
 
     private bool isAdding = true;
