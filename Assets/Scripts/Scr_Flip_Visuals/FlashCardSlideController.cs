@@ -63,8 +63,6 @@ public class FlashCardSlideController : MonoBehaviour
             }
         }
 
-        Debug.Log(slideTime);
-
         if (slideTime > maxSlideTime || slideTime < -maxSlideTime)
         {
             slideTime = 0f;
