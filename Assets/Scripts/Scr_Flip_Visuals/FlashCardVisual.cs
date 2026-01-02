@@ -30,14 +30,41 @@ public class FlashCardVisual : MonoBehaviour
 
     private bool isAdding = true;
 
+    private bool isActivated = false;
+
     void Start()
     {
         zeroToOneSwitch = MathScript.CubicEaseOut;
     }
 
+    public float GetCurrentFlipTime()
+    {
+        return currentFlip;
+    }
+
+    public void SetCurrentFlip(float cF)
+    {
+        currentFlip = cF;
+
+        float flipRotation = zeroToOneSwitch(currentFlip / flipMaxTime) * flipAngle;
+
+        flipTransform.rotation = Quaternion.Euler(angleOffset + flipRotation, 0f, 0f);
+    }
+
+    public void ActivateFlippage(bool newActiavtion)
+    {
+        isActivated = newActiavtion;
+
+        if (!isActivated)
+        {
+            isAdding = true;
+        }
+    }
+
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+
+        if (Input.GetKeyDown(KeyCode.Space) && isActivated)
         {
             isAdding = !isAdding;
         }

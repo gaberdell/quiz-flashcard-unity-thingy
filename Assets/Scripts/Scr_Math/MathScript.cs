@@ -3,6 +3,17 @@ using UnityEngine;
 public class MathScript
 {
 
+    public static int ListSafeAdd(int index, int addAmount, int listLength)
+    {
+        return (index+addAmount) % listLength;
+    }
+
+
+    public static int ListSafeSubtract(int index, int subtractAmount, int listLength)
+    {
+        return (listLength+index-subtractAmount) % listLength;
+    }
+
     public static float CubicEaseOut(float value)
     {
         if (value > 0)

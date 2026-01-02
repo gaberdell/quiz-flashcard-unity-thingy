@@ -1,3 +1,5 @@
+using System;
+using TMPro;
 using UnityEngine;
 
 public class FlashCardSlideController : MonoBehaviour
@@ -19,6 +21,40 @@ public class FlashCardSlideController : MonoBehaviour
     [SerializeField]
     private Vector3 offsetForNewCards;
 
+
+    [SerializeField]
+    private TextMeshPro leftText;
+
+    [SerializeField]
+    private TextMeshPro mainText;
+
+    [SerializeField]
+    private TextMeshPro rightText;
+
+    [SerializeField]
+    private TextMeshPro newText;
+
+    [SerializeField]
+    private TextMeshPro leftBackText;
+
+    [SerializeField]
+    private TextMeshPro mainBackText;
+
+    [SerializeField]
+    private TextMeshPro rightBackText;
+
+    [SerializeField]
+    private TextMeshPro newBackText;
+
+    [SerializeField]
+    private FlashCardVisual leftVisual;
+
+    [SerializeField]
+    private FlashCardVisual mainVisual;
+
+    [SerializeField]
+    private FlashCardVisual rightVisual;
+
     [Header("Variables to flip")]
     [SerializeField]
     private float maxSlideTime;
@@ -32,20 +68,50 @@ public class FlashCardSlideController : MonoBehaviour
 
     private float slideTime = 0f;
 
+    private int currentIndex = 0;
+
+    private String[] frontFaceCards = {"présent je/j'", "présent tu", "présent il/elle/on", "présent nous", "présent vous", "présent ils/elles"};
+
+    private String[] backFacingCards = {"vais", "vas", "va", "allons", "allez", "vont"};
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         leftOGPos = leftTransform.position;
         mainOGPos = mainTranform.position;
         rightOGPos = rightTransform.position;
+
+        resetPosition();
     }
 
     void resetPosition()
     {
+        slideTime = 0f;
+
         leftTransform.position = leftOGPos;
         mainTranform.position = mainOGPos;
         rightTransform.position = rightOGPos;
         addCardTransform.position = new Vector3(-20f,0f,0f);
+
+        mainText.text = frontFaceCards[currentIndex];
+        leftText.text = frontFaceCards[listSafeSubtract()];
+        rightText.text = frontFaceCards[listSafeAdd()];
+
+        mainBackText.text = backFacingCards[currentIndex];
+        leftBackText.text = backFacingCards[listSafeSubtract()];
+        rightBackText.text = backFacingCards[listSafeAdd()];
+
+        mainVisual.ActivateFlippage(true);
+    }
+
+    int listSafeSubtract()
+    {
+        return MathScript.ListSafeSubtract(currentIndex, 1, frontFaceCards.Length);
+    }
+
+    int listSafeAdd()
+    {
+        return MathScript.ListSafeAdd(currentIndex, 1, frontFaceCards.Length);
     }
 
     // Update is called once per frame
@@ -53,20 +119,40 @@ public class FlashCardSlideController : MonoBehaviour
     {
         if (slideTime == 0f)
         {
-            if (Input.GetKeyDown(KeyCode.RightArrow))
+            if (Input.GetKey(KeyCode.RightArrow))
             {
                 slideTime += Time.deltaTime;
+                currentIndex = listSafeSubtract();
+
+                newText.text = frontFaceCards[listSafeSubtract()];
+                newBackText.text = backFacingCards[listSafeSubtract()];
+
+                mainVisual.ActivateFlippage(false);
             }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            else if (Input.GetKey(KeyCode.LeftArrow))
             {
                 slideTime -= Time.deltaTime;
+                currentIndex = listSafeAdd();
+
+                newText.text = frontFaceCards[listSafeAdd()];
+                newBackText.text = backFacingCards[listSafeAdd()];
+
+                mainVisual.ActivateFlippage(false);
             }
         }
 
-        if (slideTime > maxSlideTime || slideTime < -maxSlideTime)
+        if (slideTime > maxSlideTime)
         {
-            slideTime = 0f;
-
+            rightVisual.SetCurrentFlip(mainVisual.GetCurrentFlipTime());
+            mainVisual.SetCurrentFlip(leftVisual.GetCurrentFlipTime());
+            
+            resetPosition();
+        }
+        else if (slideTime < -maxSlideTime)
+        {
+            leftVisual.SetCurrentFlip(mainVisual.GetCurrentFlipTime());
+            mainVisual.SetCurrentFlip(rightVisual.GetCurrentFlipTime());
+            
             resetPosition();
         }
         else if (slideTime > 0f)
