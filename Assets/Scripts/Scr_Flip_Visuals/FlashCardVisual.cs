@@ -76,5 +76,6 @@ public class FlashCardVisual : MonoBehaviour
         float flipRotation = zeroToOneSwitch(currentFlip / flipMaxTime) * flipAngle;
 
         flipTransform.rotation = Quaternion.Euler(angleOffset + flipRotation, 0f, 0f);
+
     }
 }
