@@ -2,6 +2,9 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System;
+#if WINDOWS
+using System.Windows.Forms;
+#endif
 
 public class ImportButton : MonoBehaviour
 {
@@ -42,16 +45,33 @@ public class ImportButton : MonoBehaviour
 
     public string CreateFolderWindow()
     {
-        bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+        #if WINDOWS
 
-        if (isLinux)
-        {
-            return CreateLinuxWindow();
+        return CreateWindowsWindow();
+
+        #elif MACOS
+        //Figure this out.. Maybe just switch over to MAUI at this rate lol
+        #endif
+
+
+        return CreateLinuxWindow();
+
+    }
+
+
+    #if WINDOWS
+    
+    public string CreateWindowsWindow() {
+        using (OpenFileDialog openFileDialog = new OpenFileDialog()) {
+            if (openFileDialog.ShowDialog() == DialogResult.OK) {
+                return openFileDialog.FileName;
+            }
         }
-
         return "";
     }
 
+
+    #endif
 
     public string CreateLinuxWindow()
     {
